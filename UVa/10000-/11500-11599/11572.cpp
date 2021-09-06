@@ -18,6 +18,7 @@ int main(void){
             scanf("%d", &snow);
             int idx = m[snow];
             if(idx != 0){ // Found
+                // If the element at idx is farther from current i, the element is included in old subarray.
                 if(i - idx > length) length++;
                 else length = i - idx;
             }
