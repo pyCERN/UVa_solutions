@@ -10,7 +10,6 @@ public class Main{
         while(true){
             int N = Integer.parseInt(br.readLine());
             if(N == 0){
-                // System.out.println();
                 break;
             }
 
@@ -21,7 +20,7 @@ public class Main{
                     break;
                 }
                 StringTokenizer st = new StringTokenizer(str, " ");
-                int orderNum = 0; // 1 2 3 4 ...
+                int orderNum = 0;
                 for(int i = 0; i < N; i++){
                     int inputNum = Integer.parseInt(st.nextToken());
                     while(++orderNum < inputNum){
