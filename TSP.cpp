@@ -20,7 +20,7 @@ void tour(void){
         for(int nxt_pos = 0; nxt_pos < N; nxt_pos++){
             int mask = visited.to_ulong();
             if((nxt_pos != cur_pos) && (mask & (1 << nxt_pos) == 0)){ // not cur_pos and not visited
-                
+                tsp[cur_pos][mask] = 
             }
 
         }
