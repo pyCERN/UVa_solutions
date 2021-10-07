@@ -1,5 +1,4 @@
 #include <cstdio>
-#include <bitset>
 using namespace std;
 
 #define MIN 100000001
