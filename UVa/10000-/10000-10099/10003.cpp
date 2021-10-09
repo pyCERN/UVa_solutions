@@ -7,7 +7,7 @@ int L, n;
 int A[52];
 /*
 cut_dp[i][j]
-piece of [A[i], A[j]]
+min cost of when cutting [A[i], A[j]]
 */
 int cut_dp[52][52] = {0,};
 
@@ -15,7 +15,6 @@ int min(int a, int b){
     return a < b ? a : b;
 }
 
-// return min cost given piece of [A[left], A[right]]
 int cut(int left, int right){
     int min_cost = MIN;
 
