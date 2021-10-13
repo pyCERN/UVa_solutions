@@ -1,15 +1,10 @@
 #include <cstdio>
+#include <iostream>
 #include <vector>
 using namespace std;
 
-/*
-AB, CE, DB, EC
-A : B     adjList[0]
-B : A, D  adjList[1]
-C : E
-D : B
-E : C
-*/
+// String input!
+
 enum {UNVISITED = false, VISITED = true};
 
 void dfs(vector<int> adjList[], bool visited[], int node){
@@ -17,7 +12,6 @@ void dfs(vector<int> adjList[], bool visited[], int node){
 
     for(int i = 0; i < (int)adjList[node].size(); i++){
         if(!visited[adjList[node][i]]){
-            printf("%d\n", adjList[node][i]);
             dfs(adjList, visited, adjList[node][i]);
         }
     }
@@ -28,32 +22,36 @@ int main(void){
 
     scanf("%d", &TC);
     while(TC--){
-        char max_node;
-        char edge[2];
+        int max_node;
+        string edge, s;
         int num_sub = 0;
 
-        scanf(" %c", &max_node);
+        cin >> s;
+        max_node = s[0] - 65;
 
-        vector<int> adjList[(int)max_node];
-        bool visited[(int)max_node];
+        vector<int> adjList[30];
+        bool visited[30];
 
-        while(scanf("%s", edge) != EOF){
+        getline(cin, s);
+        while(getline(cin, edge)){
+            if(edge.length() == 0) break;
             int u = edge[0] - 65;
             int v = edge[1] - 65;
 
             adjList[u].push_back(v);
             adjList[v].push_back(u);
-            printf("%d %d\n", u, v);
         }
-        for(int i = 0; i < (int)max_node; i++) visited[i] = UNVISITED;
+        for(int i = 0; i <= (int)max_node; i++) visited[i] = UNVISITED;
 
-        for(int i = 0; i < (int)max_node; i++){
+        for(int i = 0; i <= (int)max_node; i++){
             if(!visited[i]){
                 dfs(adjList, visited, i);
                 num_sub++;
             }
         }
         printf("%d\n", num_sub);
+
+        if(TC != 0) printf("\n");
     }
 
     return 0;
