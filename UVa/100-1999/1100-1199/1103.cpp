@@ -37,12 +37,11 @@ int hex_to_bin[][4] = {
                         {1, 1, 1, 1}
                        };
 
-void floodfill(int grid[210][210], int x, int y, int c1, int c2, int c3){ // 1, 2, (1, 2)
-    int num = 1;
-
+void floodfill(int grid[210][210], int x, int y, int c1, int c2, int c3){
     if(x < 0 | x > 4*W+1 | y < 0 | y > H+1) return;
     if(grid[y][x] != c1) return;
 
+    // Use floodfill func twice
     if(grid != letter)
         hieroglyphs[y][x] = c2;
     letter[y][x] = c3;
@@ -55,6 +54,8 @@ void floodfill(int grid[210][210], int x, int y, int c1, int c2, int c3){ // 1, 
 int get_letter(void){
     int num, n_holes = 0;
 
+    // Flip letter to group of 1s
+    // Group of 1s -> number of holes
     for(int y = 0; y <= H+1; y++){
         for(int x = 0; x <= 4*W; x++){
             if(letter[y][x] == 1) letter[y][x] = 0;
@@ -83,6 +84,7 @@ int main(void){
         memset(hieroglyphs, 0, sizeof(hieroglyphs));
         ans.clear();
 
+        // Hexadecimal input to binary
         for(int i = 0; i < H; i++){
             scanf("%s", str);
             for(int j = 0; j < W; j++){
@@ -94,6 +96,8 @@ int main(void){
                 }
             }
         }
+
+        // Floodfill letters one by one
         for(int y = 0; y <= H+1; y++){
             for(int x = 0; x <= 4*W+1; x++){
                 if(hieroglyphs[y][x] == 1){ // floodfill one letter
