@@ -34,7 +34,7 @@ void bfs(ii start, ii end, int R, int C){
         int cur_node = q.front();
         q.pop();
 
-        for(int i = 0; i < adj_list[cur_node].size(); i++){
+        for(int i = 0; i < 4; i++){
             int next_node = adj_list[cur_node][i];
             if(dist[next_node] == INF){
                 q.push(next_node);
