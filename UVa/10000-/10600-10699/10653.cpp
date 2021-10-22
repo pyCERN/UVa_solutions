@@ -1,4 +1,5 @@
 // 10653 - Bombs! NO they are Mines!!
+// Shortest Path
 
 #include <cstdio>
 #include <vector>
@@ -11,60 +12,69 @@ typedef pair<int, int> ii;
 typedef vector<int> vi;
 typedef vector<ii> vii;
 
-vii map;
-vii mine_list;
-int dx[] = {1, -1, 0, 0};
-int dy[] = {0, 0, 1, -1};
+vi mine_list[1010];
+int dr[] = {0, 0, 1, -1};
+int dc[] = {1, -1, 0, 0};
 
+void bfs(int start_r, int start_c, int end_r, int end_c, int R, int C){
+    vi dist;
+    queue<int> qr, qc;
 
-void bfs(ii start, ii end, int R, int C){
-    vii dist;
-    queue<int> q;
+    int start = start_r*C + start_c;
+    int end = end_r*C + end_c;
 
     dist.clear();
-    for(int y = 0; y < R; y++){
-        for(int x = 0; x < C; x++) {
-            dist.push_back(INF);
-        }
+    for(int r = 0; r < R; r++){
+        for(int c = 0; c < C; c++) dist.push_back(INF);
     }
     dist[start] = 0;
-    q.push(start);
+    qr.push(start_r); qc.push(start_c);
 
-    while(!q.empty()){
-        int cur_node = q.front();
-        q.pop();
+    while(!qr.empty()){
+        int cur_node_r = qr.front();
+        int cur_node_c = qc.front();
+        int cur_node = cur_node_r*C + cur_node_c;
+        qr.pop(); qc.pop();
 
         for(int i = 0; i < 4; i++){
-            int next_node = adj_list[cur_node][i];
+            int next_node_r = cur_node_r + dr[i], next_node_c = cur_node_c + dc[i];
+            int next_node = next_node_r*C + next_node_c;
+            if(next_node_r < 0 || next_node_r >= R || next_node_c < 0 || next_node_c >= C) continue;
+            if(find(mine_list[next_node_r].begin(), mine_list[next_node_r].end(), next_node_c) != mine_list[next_node_r].end()) continue;
+
             if(dist[next_node] == INF){
-                q.push(next_node);
+                qr.push(next_node_r); qc.push(next_node_c);
                 dist[next_node] = dist[cur_node] + 1;
+                if(next_node == end){
+                    printf("%d\n", dist[end]);
+                    return;
+                }
             }
         }
     }
-    printf("%d\n", dist[end]);
 }
 
 int main(void){
     int R, C;
     int row, col, rows, num_mines;
-    int start_x, start_y, end_x, end_y;
+    int start_c, start_r, end_c, end_r;
 
     while(scanf("%d %d", &R, &C), R | C){
-        mine_list.clear();
+        for(int r = 0; r < R; r++) mine_list[r].clear();
+
         scanf("%d", &rows);
         for(int i = 0; i < rows; i++){
             scanf("%d", &row);
             scanf("%d", &num_mines);
             for(int j = 0; j < num_mines; j++){
                 scanf("%d", &col);
-                mine_list.push_back(make_pair(row, col));
+                mine_list[row].push_back(col);
             }
         }
-        scanf("%d %d", &start_x, &start_y);
-        scanf("%d %d", &end_x, &end_y);
+        scanf("%d %d", &start_r, &start_c);
+        scanf("%d %d", &end_r, &end_c);
 
-        bfs(make_pair(start_x, start_y), make_pair(end_x, end_y), R, C);
+        bfs(start_r, start_c, end_r, end_c, R, C);
     }
 
     return 0;
