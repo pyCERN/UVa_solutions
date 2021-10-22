@@ -1,6 +1,6 @@
 from collections import deque
 
-# Topological sort
+# Topological Sort
 
 def topsort(queue, in_edge, out_edge):
     for key in in_edge.keys():
