@@ -12,12 +12,12 @@ A J D S W K
 */
 
 int H, W;
-int hieroglyphs[210][210], letter[210][210];
+int hiero[210][210], letter[210][210];
 vector<char> ans;
 char ans_letter[] = "WAKJSD";
-// E, W, S, N
-int dx[] = {1, -1, 0, 0};
-int dy[] = {0, 0, 1, -1};
+// E, N, W, S, ES, EN, WN, WS
+int dr[] = {0, -1, 0, 1, 1, -1, -1, 1};
+int dc[] = {1, 0, -1, 0, 1, 1, -1, -1};
 int hex_to_bin[][4] = {
                         {0, 0, 0, 0},
                         {0, 0, 0, 1},
@@ -37,79 +37,63 @@ int hex_to_bin[][4] = {
                         {1, 1, 1, 1}
                        };
 
-void floodfill(int grid[210][210], int x, int y, int c1, int c2, int c3){
-    if(x < 0 | x > 4*W+1 | y < 0 | y > H+1) return;
-    if(grid[y][x] != c1) return;
-
-    // Use floodfill func twice
-    if(grid != letter)
-        hieroglyphs[y][x] = c2;
-    letter[y][x] = c3;
-
-    for(int i = 0; i < 8; i++){
-        floodfill(grid, x+dx[i], y+dy[i], c1, c2, c3);
-    }
+void floodfill(int r, int c, int c1, int c2){ // if c1 -> c2
+    if(r < 0 || r >= H || c < 0 || c >= 4*W) return;
+    if(hiero[r][c] != c1) return;
+    hiero[r][c] = c2;
+    letter[r+1][c+1] = c1;
+    for(int i = 0; i < 8; i++) floodfill(r+dr[i], c+dc[i], c1, c2);
 }
 
-int get_letter(void){
-    int num, n_holes = 0;
-
-    // Flip letter to group of 1s
-    // Group of 1s -> number of holes
-    for(int y = 0; y <= H+1; y++){
-        for(int x = 0; x <= 4*W; x++){
-            if(letter[y][x] == 1) letter[y][x] = 0;
-            else letter[y][x] = 1;
-        }
-    }
-
-    for(int y = 0; y <= H+1; y++){
-        for(int x = 0; x <= 4*W+1; x++){
-            if(letter[y][x] == 1){
-                floodfill(letter, x, y, 1, 2, 2);
-                n_holes++;
-            }
-        }
-    }
-    
-    return ans_letter[n_holes-1];
+void floodfill_letter(int r, int c, int c1, int c2){
+    if(r < 0 || r >= H+2 || c < 0 || c >= 4*W+2) return;
+    if(letter[r][c] != c1) return;
+    letter[r][c] = c2;
+    for(int i = 0; i < 8; i++) floodfill_letter(r+dr[i], c+dc[i], c1, c2);
 }
 
 int main(void){
     int TC = 0;
+    char str[60];
+    int num_holes = 0;
 
     while(scanf("%d %d", &H, &W), H | W){
-        if(TC) printf("\n");
-        char str[200];
-        memset(hieroglyphs, 0, sizeof(hieroglyphs));
-        ans.clear();
 
-        // Hexadecimal input to binary
+        memset(hiero, 0, sizeof(hiero));
+        ans.clear();
         for(int i = 0; i < H; i++){
             scanf("%s", str);
             for(int j = 0; j < W; j++){
-                int hex = 0;
-                if(str[j] >= 97) hex = str[j] - 97 + 10;
-                else hex = str[j] - 48;
                 for(int k = 0; k < 4; k++){
-                    hieroglyphs[i+1][4*j+k+1] = hex_to_bin[hex][k];
+                    // Zero padding
+                    if(str[j] >= 97) hiero[i][4*j+k] = hex_to_bin[str[j]-97+10][k];
+                    else hiero[i][4*j+k] = hex_to_bin[str[j]-48][k];
                 }
             }
         }
 
-        // Floodfill letters one by one
-        for(int y = 0; y <= H+1; y++){
-            for(int x = 0; x <= 4*W+1; x++){
-                if(hieroglyphs[y][x] == 1){ // floodfill one letter
-                    memset(letter, 0, sizeof(letter));
-                    floodfill(hieroglyphs, x, y, 1, 2, 1);
-                    ans.push_back(get_letter());
+        for(int i = 0; i < H; i++){
+            for(int j = 0; j < 4*W; j++){
+                if(hiero[i][j] != 1) continue;
+                memset(letter, 0, sizeof(letter));
+
+                floodfill(i, j, 1, 2);
+                num_holes = 0;
+                for(int r = 0; r < H+2; r++){
+                    for(int c = 0; c < 4*W+2; c++){
+                        if(letter[r][c] != 0) continue;
+                        floodfill_letter(r, c, 0, 2);
+                        num_holes++;
+                    }
                 }
+                ans.push_back(ans_letter[num_holes-1]);
             }
         }
+
         sort(ans.begin(), ans.end());
-        printf("Case %d: ", ++TC);
+        printf("Case %d: ", TC+1);
         for(int i = 0; i < ans.size(); i++) printf("%c", ans[i]);
+        printf("\n");
     }
 
     return 0;
