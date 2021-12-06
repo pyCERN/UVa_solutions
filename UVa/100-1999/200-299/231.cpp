@@ -4,26 +4,26 @@
 using namespace std;
 
 int main(void){
-    vector<int> ans;
-    int num, LIS = 1;
+    vector<int> sortedSeq;
+    int num, LIS;
     int TC = 0;
     FILE *fp = fopen("ans.txt", "w");
 
     while(scanf("%d", &num) == 1){
-        LIS = 1; ans.clear();
+        LIS = 1; sortedSeq.clear();
         if(num < 0) break;
         num = -num; // to make increasing order
-        ans.push_back(num);
+        sortedSeq.push_back(num);
 
         while(scanf("%d", &num) == 1){
             if(num < 0) break;
             num = -num;
-            if(num >= ans[LIS-1]){
-                ans.push_back(num);
+            if(num >= sortedSeq[LIS-1]){
+                sortedSeq.push_back(num);
                 LIS++;
             }
             else{
-                auto it = lower_bound(ans.begin(), ans.end(), num);
+                auto it = lower_bound(sortedSeq.begin(), sortedSeq.end(), num);
                 *it = num;
             }
         }
