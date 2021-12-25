@@ -1,3 +1,5 @@
+// UVa 10131 - Is Bigger Smarter?
+// Sort + Longest Decreasing Sequence (LDS)
 #include <cstdio>
 #include <cstring>
 #include <vector>
