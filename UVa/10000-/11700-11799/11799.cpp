@@ -1,4 +1,5 @@
-#include <stdio.h>
+// UVa - 11799 Horror Dash
+#include <cstdio>
 
 int main(void) {
 	int T = 0;
