@@ -1,9 +1,9 @@
+// UVa 10505 - Montesco vs Capuleto
+// Bipartite graph
 #include <cstdio>
 #include <vector>
-<<<<<<< HEAD
 #include <queue>
 #include <algorithm>
-#define INF 10000000
 using namespace std;
 
 typedef vector<int> vi;
@@ -13,91 +13,66 @@ vvi adjList;
 int N;
 
 bool isEnemy(int i, int j){
-    if(find(adjList[i].begin(), adjList[i].end(), j) != adjList[i].begin())
+    if(find(adjList[i].begin(), adjList[i].end(), j) != adjList[i].end())
         return true;
     else return false;
 }
 
 void bfs(void){
-    queue<int> q; q.push(0);
-    vi color(N, INF); color[0] = 0;
-    bool isBipartite = true;
+    int ans = 0;
+    queue<int> q;
+    vi color(N, -1);
     
-    while(!q.empty()){
-        int u = q.front(); q.pop();
-        for(int i = 0; i < (int)adjList[u].size(); i++){
-            int v = adjList[u][i];
-            if(color[v] == INF){
-                color[v] = 1 - color[u];
-                q.push(v);
-            }
-            else if(color[v] == color[u]){
-                isBipartite = false;
-                break;
+    for(int s = 0; s < N; s++){ // search for all nodes
+        bool isBipartite = true;
+        if(color[s] != -1) continue;
+
+        // calculate max num per connected graphs
+        int nums[2] = {0, 0};
+        q.push(s); color[s] = 0; nums[0]++;
+        while(!q.empty()){
+            int u = q.front(); q.pop();
+            for(int i = 0; i < (int)adjList[u].size(); i++){
+                int v = adjList[u][i];
+                if(color[v] == -1){
+                    color[v] = 1 - color[u];
+                    nums[color[v]]++;
+                    q.push(v);
+                }
+                else if(color[v] == color[u])
+                    isBipartite = false;
             }
         }
+        if(isBipartite) ans += max(nums[0], nums[1]);
     }
-    for(int i = 0; i < N; i++) printf("%d ", color[i]);
-    printf("\n");
+    printf("%d\n", ans);
 }
 
 int main(void){
-    int nEnemy;
-
-    scanf("%d", &N);
-    adjList.assign(N, vi());
-
-    for(int n = 0; n < N; n++){
-        scanf("%d", &nEnemy);
-        for(int i = 0; i < nEnemy; i++){
-            int enemyIdx;
-            scanf("%d", &enemyIdx); enemyIdx--;
-            // Symmetric
-            if(!isEnemy(n, enemyIdx))
-                adjList[n].push_back(enemyIdx);
-            if(!isEnemy(enemyIdx, n))
-                adjList[enemyIdx].push_back(n);
-        }
-    }
-    bfs();
-
-    return 0;
-=======
-using namespace std;
-
-int N;
-vector<int> enemyList[201];
-int enemyMat[201][201];
-
-/*
-  1 2 3 4 5
-1 o x x o o
-2 x o o o o
-3 x o o o o
-4 o o o o x
-5 o o o x o
-
-e of e -> f
-e of f -> e
-f of f -> f
-*/
-int main(void){
-    int TC;
-    int nEnemies, enemyIdx;
+    int TC, nEnemies;
 
     scanf("%d", &TC);
-    scanf("%d", &N);
-    memset(enemyMat, 0, sizeof(enemyMat));
 
-    for(int n = 1; n <= N; n++){
-        scanf("%d", &nEnemies);
+    while(TC--){
+        scanf("%d", &N);
+        adjList.assign(N, vi());
 
-        for(int i = 1; i <= nEnemies; i++){
-            scanf("%d", &enemyIdx);
-            enemyMat[n][i] = 1; enemyMat[i][n] = 1; // symmetric
+        for(int n = 0; n < N; n++){
+            scanf("%d", &nEnemies);
+            for(int i = 0; i < nEnemies; i++){
+                int enemyIdx;
+                scanf("%d", &enemyIdx); enemyIdx--;
+                // Symmetric
+                if(enemyIdx < N){
+                    if(!isEnemy(n, enemyIdx))
+                        adjList[n].push_back(enemyIdx);
+                    if(!isEnemy(enemyIdx, n))
+                        adjList[enemyIdx].push_back(n);
+                }
+            }
         }
+        bfs();
     }
 
-    
->>>>>>> a12fc020fc7761bc8bcc5b9bf055285b92c8c430
+    return 0;
 }
