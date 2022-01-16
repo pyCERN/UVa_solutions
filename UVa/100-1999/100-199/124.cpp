@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdio>
+#include <cstring>
 #include <vector>
 #include <string>
 #include <map>
@@ -9,21 +10,24 @@ typedef vector<int> vi;
 typedef vector<vi> vvi;
 
 vvi adjList;
-vi topsort, visited;
-map<char, int> vertexList;
-map<int, char> listVertex;
+vi toposort;
+map<char, int> vertexList; // convert alphabet to index
+map<int, char> listVertex; // convert index to alphabet
+int visited[21];
 int N;
 
-void dfs2(int u){
-    visited[u] = 1;
-    printf("%c : ", listVertex[u]);
-    for(int i = 0; i < (int)adjList[u].size(); i++){
-        int v = adjList[u][i];
-        printf("%c ", listVertex[v]);
-        if(visited[v] == 0)
-            dfs2(v);
+// 0 -> 1 -> 2
+// 3
+void dfs(int u){
+    // search for all vertices
+    for(int i = 0; i < N; i++){
+        if(visited[i] == 0){ // if node i not visited
+            // for all vertices connected to node i
+            for(int j = 0; j < (int)adjList[i].size(); j++){
+                if(visited[j] == 1) return;
+            }
+        }
     }
-    topsort.push_back(u);
 }
 
 int main(void){
@@ -38,30 +42,14 @@ int main(void){
             }
             N = vertexList.size();
             adjList.assign(N, vi());
-            topsort.clear();
+            toposort.clear();
         }
         else{
             for(int i = 0; i < input.size(); i += 4){
                 adjList[vertexList[input[i]]].push_back(vertexList[input[i+2]]);
             }
-            // for(int i = 0; i < adjList.size(); i++){
-            //     printf("%c : ", listVertex[i]);
-            //     for(int j = 0; j < adjList[i].size(); j++) printf("%c ", listVertex[adjList[i][j]]);
-            //     printf("\n");
-            // }
-
-            visited.assign(N, 0);
-            for(int i = 0; i < (int)adjList.size(); i++){
-                if(visited[i] == 0){
-                    dfs2(i);
-                    printf("\n");}
-            }
-            // dfs2(0);
-            for(int i = topsort.size()-1; i >= 0; i--) printf("%c ", listVertex[topsort[i]]);
-            printf("\n");
         }
-
-
+        dfs(0);
         nLine++;
     }
 
