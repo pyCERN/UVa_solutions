@@ -1,27 +1,29 @@
-#include <iostream>
-#include <vector>
+// UVa 441 - Lotto
+// Complete search
+#include <cstdio>
 using namespace std;
 
-// Complete Search
-
 int main(void){
-	int k;
-	int S[13];
+	int S[50];
+	int TC = 0, N;
 
-	scanf("%d", &k);
-	for(int i = 0; i < k; i++) scanf("%d", &S[i]);
-	for(int a = 0; a < k - 5; a++){
-		for(int b = a + 1; b < k - 4; b++){
-			for(int c = b + 1; c < k - 3; c++){
-				for(int d = c + 1; d < k - 2; d++){
-					for(int e = d + 1; e < k - 1; e++){
-						for(int f = e + 1; f < k; f++){
-							printf("%d %d %d %d %d %d\n", S[a], S[b], S[c], S[d], S[e], S[f]);
+	while(scanf("%d", &N), N != 0){
+		if(TC > 0) printf("\n");
+		for(int i = 0; i < N; i++) scanf("%d", &S[i]);
+
+		for(int i = 0; i < N; i++){
+			for(int j = i+1; j < N; j++){
+				for(int k = j+1; k < N; k++){
+					for(int l = k+1; l < N; l++){
+						for(int m = l+1; m < N; m++){
+							for(int n = m+1; n < N; n++) printf("%d %d %d %d %d %d\n", S[i], S[j], S[k], S[l], S[m], S[n]);
 						}
 					}
 				}
 			}
 		}
+		TC++;
 	}
+
 	return 0;
 }
