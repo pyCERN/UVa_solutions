@@ -1,4 +1,5 @@
 // UVa 10576 - Y2K Accounting Bug
+// Backtracking
 #include <cstdio>
 #include <cstring>
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
