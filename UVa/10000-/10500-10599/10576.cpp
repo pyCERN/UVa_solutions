@@ -12,50 +12,45 @@
 5, 6, 7, 8, 9
 6, 7, 8, 9, 10
 7, 8, 9, 10, 11
-0 1 2 3 4 5 6 7 8 9 10 11 12
-0 s s s s s s s s s  s  s  s
+
 2^12 total cases
-(s, s, ..., s)
-(s, s, ..., -d)
-...
-(-d, -d, ..., -d)
 */
 
 int s, d, surplus;
-int accSum[7]; // save sum of [0..0], ..., [0..6]
-FILE *fp = fopen("ans.txt", "w");
+int earn[12];
 
-void backtrack(int i, int num){ // num : sum [1..i]
+void backtrack(int i, int num){ // num : sum [0, i-1]
     if(i == 12){
         surplus = MAX(surplus, num);
-        fprintf(fp, "%d %d\n", num, surplus);
         return;
     }
-    int five = 0;
-    
-    if(i < 7){
-        accSum[i] = num;
+
+    if(i < 4){
+        earn[i] = s;
+        backtrack(i+1, num+s);
+        earn[i] = -d;
+        backtrack(i+1, num-d);
     }
 
-    // check 5 five months, i = [4..11]
-    if(i >= 4){
-        if(i == 4) five = num;
-        else five = num-accSum[i-5]; // sum of [i-4..i]
-    }
-    if(five > 0) backtrack(i, num-d);
-    else{
-        backtrack(i+1, num+s);
-        backtrack(i+1, num-d);
+    else{ // 4, 5, 6, 7, 8, 9, 10, 11
+        int five;
+        earn[i] = s;
+        five = earn[i-4] + earn[i-3] + earn[i-2] + earn[i-1] + earn[i];
+        if(five < 0) backtrack(i+1, num+s);
+        earn[i] = -d;
+        five = earn[i-4] + earn[i-3] + earn[i-2] + earn[i-1] + earn[i];
+        if(five < 0) backtrack(i+1, num-d);
     }
 }
 
 int main(void){
-    scanf("%d %d", &s, &d);
-    memset(accSum, 0, sizeof(accSum));
-    surplus = 0;
+    while(scanf("%d %d", &s, &d) == 2){
+        surplus = 0;
 
-    backtrack(0, 0);
-    printf("%d\n", surplus);
-fclose(fp);
+        backtrack(0, 0);
+        if(surplus > 0) printf("%d\n", surplus);
+        else printf("Deficit\n");
+    }
+
     return 0;
 }
