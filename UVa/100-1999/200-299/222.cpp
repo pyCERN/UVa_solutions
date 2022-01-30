@@ -1,4 +1,5 @@
 // UVa 222 - Budget Travel
+// Backtracking
 #include <cstdio>
 #include <cmath>
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
