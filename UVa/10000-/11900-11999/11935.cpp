@@ -1,11 +1,12 @@
 // UVa 11935 - Through the Desert
+// Binary search
 #include <iostream>
 #include <sstream>
 #include <cstdio>
 #include <cmath>
 #include <vector>
 #include <string>
-#define EPS 1e-9
+#define EPS 1e-6
 using namespace std;
 
 // fuel consume liter per 1km
@@ -32,6 +33,7 @@ bool simulate(double capacity){ // if reachable with capacity
     for(int i = 0; i < events.size()-1; i++){
         capacity -= (dists[i+1]-dists[i]) * (fuelConsume[i]+fuel);
         fuel += fuelConsume[i];
+        // printf("%d %lf %lf\n", i, capacity, fuel);
         if(events[i] == LEAK) nLeaks++;
         else if(events[i] == GAS) capacity = iniCapacity;
         else if(events[i] == MECHANIC) fuel -= nLeaks;
@@ -53,6 +55,7 @@ void binarySearch(void){
         }
         else lo = mid;
     }
+    printf("%lf\n", mid);
 }
 
 int main(void){
@@ -61,9 +64,10 @@ int main(void){
         getline(cin, line);
         vector<string> command = split(line, ' ');
 
-        dists.push_back(stoi(command[0])); 
+        dists.push_back(stoi(command[0]));
         if(command[1] == "Fuel"){
-            events.push_back(FUEL); fuelConsume.push_back(stoi(command[3])/100);
+            // printf("%lf\n", stoi(command[3])/100.0);
+            events.push_back(FUEL); fuelConsume.push_back(stoi(command[3])/100.0);
         }
         else if(command[1] == "Leak"){
             events.push_back(LEAK); fuelConsume.push_back(0.01);
@@ -76,6 +80,7 @@ int main(void){
         }
         else{
             events.push_back(GOAL);
+            break;
         }
     }
     binarySearch();
