@@ -6,7 +6,7 @@
 #include <cmath>
 #include <vector>
 #include <string>
-#define EPS 1e-6
+#define EPS 1e-7
 using namespace std;
 
 // fuel consume liter per 1km
@@ -27,17 +27,19 @@ vector<string> split(string str, char delimiter){
 }
 
 bool simulate(double capacity){ // if reachable with capacity
-    double fuel = 0.0, iniCapacity = capacity;
-    int nLeaks = 0;
+    /*
+    consumption: fuel consumed by Fuel consumption
+    leak: fuel consumed by Leak
+    */
+    double consumption = 0.0, leak = 0.0, iniCapacity = capacity;
 
     for(int i = 0; i < events.size()-1; i++){
-        capacity -= (dists[i+1]-dists[i]) * (fuelConsume[i]+fuel);
-        fuel += fuelConsume[i];
-        // printf("%d %lf %lf\n", i, capacity, fuel);
-        if(events[i] == LEAK) nLeaks++;
+        if(events[i] == FUEL) consumption = fuelConsume[i];
+        else if(events[i] == LEAK) leak += fuelConsume[i];
         else if(events[i] == GAS) capacity = iniCapacity;
-        else if(events[i] == MECHANIC) fuel -= nLeaks;
-        if(capacity <= 0) return false;
+        else if(events[i] == MECHANIC) leak = 0.0;
+        capacity -= (dists[i+1]-dists[i]) * (consumption+leak);
+        if(capacity < 0) return false;
     }
 
     return true;
@@ -49,41 +51,49 @@ void binarySearch(void){
     while(fabs(hi-lo) > EPS){
         mid = (lo + hi) / 2;
         if(simulate(mid)){
-            printf("%lf %lf %lf\n", lo, mid, hi);
             ans = mid;
             hi = mid;
         }
         else lo = mid;
     }
-    printf("%lf\n", mid);
+   printf("%.3lf\n", mid);
 }
 
 int main(void){
     string line;
+
     while(true){
+        events.clear(); dists.clear(); fuelConsume.clear();
         getline(cin, line);
         vector<string> command = split(line, ' ');
+        if(command[3] == "0") break;
+        dists.push_back(0.0);
+        events.push_back(FUEL); fuelConsume.push_back(stoi(command[3])/100.0);
+        
+        while(true){
+            getline(cin, line);
+            vector<string> command = split(line, ' ');
 
-        dists.push_back(stoi(command[0]));
-        if(command[1] == "Fuel"){
-            // printf("%lf\n", stoi(command[3])/100.0);
-            events.push_back(FUEL); fuelConsume.push_back(stoi(command[3])/100.0);
+            dists.push_back(stoi(command[0]));
+            if(command[1] == "Fuel"){
+                events.push_back(FUEL); fuelConsume.push_back(stoi(command[3])/100.0);
+            }
+            else if(command[1] == "Leak"){
+                events.push_back(LEAK); fuelConsume.push_back(1.0);
+            }
+            else if(command[1] == "Gas"){
+                events.push_back(GAS); fuelConsume.push_back(0.0);
+            }
+            else if(command[1] == "Mechanic"){
+                events.push_back(MECHANIC); fuelConsume.push_back(0.0);
+            }
+            else{
+                events.push_back(GOAL);
+                break;
+            }
         }
-        else if(command[1] == "Leak"){
-            events.push_back(LEAK); fuelConsume.push_back(0.01);
-        }
-        else if(command[1] == "Gas"){
-            events.push_back(GAS); fuelConsume.push_back(0.0);
-        }
-        else if(command[2] == "Mechanic"){
-            events.push_back(MECHANIC); fuelConsume.push_back(0.0);
-        }
-        else{
-            events.push_back(GOAL);
-            break;
-        }
+        binarySearch();
     }
-    binarySearch();
 
     return 0;
 }
