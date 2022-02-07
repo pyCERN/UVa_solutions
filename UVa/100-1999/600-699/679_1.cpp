@@ -1,27 +1,38 @@
-#include <iostream>
-#include <cmath>
+// UVa 679 - Dropping Balls
+// Binary search
+#include <cstdio>
+#include <cstring>
 
-// Binary Search
+bool tree[2<<20+1];
+int D, I;
+int ans[21][524289] = {0,}; // (D, I)
 
-int max_node;
-
-int search(int node, int balls){
-	int left = 2 * node, right = left + 1;
-	if(left < max_node && right <= max_node){
-		if(balls % 2) return search(left, balls / 2 + 1);
-		else return search(right, balls / 2);
+void binarySearch(int depth, int node){
+	if(depth == D){
+		ans[D][I] = node;
+		return;
 	}
-	else return node;
+	int left = node<<1, right = left+1;
+	
+	tree[node] = !tree[node];
+	if(tree[node]) binarySearch(depth+1, left);
+	else binarySearch(depth+1, right);
 }
 
 int main(void){
-	int T, D, I;
-
-	scanf("%d", &T);
-	while(T--){
-		scanf("%d %d", &D, &I);
-		max_node = pow(2, D);
-		printf("%d\n", search(1, I));
+	int TC;
+	
+	for(D = 2; D <= 20; D++){
+		memset(tree, false, sizeof(tree));
+		for(I = 1; I <= 524288; I++) binarySearch(1, 1);
 	}
+
+	scanf("%d", &TC);
+	while(TC--){
+		scanf("%d %d", &D, &I);
+		printf("%d\n", ans[D][I]);
+	}
+	scanf("%d", &D);
+
 	return 0;
 }
