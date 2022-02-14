@@ -30,7 +30,9 @@ int main(void){
     }
     
     sort(station.begin(), station.end(), leftmost);
+    printf("\n");
     sort(station.begin(), station.end(), rightmost);
+    for(int i = 0; i < G; i++) printf("%d %d\n", station[i].first, station[i].second);
 
     return 0;
 }
